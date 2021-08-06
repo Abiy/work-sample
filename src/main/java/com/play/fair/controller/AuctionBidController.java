@@ -48,6 +48,10 @@ public class AuctionBidController {
         if (Objects.isNull(auction) || auction.getFloorPrice() > model.getBidPrice()){
             throw new RuntimeException("Invalid Auction or Bid Price");
         }
+        LocalDateTime now = LocalDateTime.now();
+        if(now.isAfter(auction.getEndTime()) || now.isBefore(auction.getStartTime())){
+            throw new RuntimeException("Auction is not currently open.");
+        }
         AuctionBid auctionResult = bidRepository.save(auctionBid);
         List<AuctionBid> bids = bidRepository.findByAuctionId(auctionId);
         Optional<AuctionBid> winner = bids.stream()
